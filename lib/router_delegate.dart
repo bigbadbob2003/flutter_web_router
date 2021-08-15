@@ -29,22 +29,24 @@ class AppRouterDelegate extends RouterDelegate<List<AppPageRoute>>
 
   @override
   Widget build(BuildContext context) {
-    return routerService.allPages.isNotEmpty
-        ? Navigator(
-            key: routerService.navigatorKey,
-            pages: [
-              ...routerService.allPages,
-              //if (currentConfiguration.isNotEmpty ? currentConfiguration.last.isUnknown : true) unknownPage,
-            ],
-            onPopPage: (route, result) {
-              if (!route.didPop(result)) {
-                return false;
-              }
-              routerService.pop();
+    routerService.navigator = Navigator(
+      key: routerService.navigatorKey,
+      pages: [
+        ...routerService.allPages,
+        //if (currentConfiguration.isNotEmpty ? currentConfiguration.last.isUnknown : true) unknownPage,
+      ],
+      onPopPage: (route, result) {
+        if (!route.didPop(result)) {
+          return false;
+        }
+        routerService.pop();
 
-              return true;
-            },
-          )
+        return true;
+      },
+    );
+
+    return routerService.allPages.isNotEmpty
+        ? (routerService.layoutWidget != null ? routerService.layoutWidget! : routerService.navigator!)
         : Container();
   }
 }

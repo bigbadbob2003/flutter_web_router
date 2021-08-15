@@ -9,7 +9,7 @@ class RouterService extends ChangeNotifier {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   final AppPageRoute initialRoute;
 
-  RouterService(this.initialRoute);
+  RouterService(this.initialRoute, {this.layoutWidget});
 
   ListQueue<AppPageRoute> _routeStack = ListQueue<AppPageRoute>();
   Map<String, String>? _currentPathVariables;
@@ -17,6 +17,9 @@ class RouterService extends ChangeNotifier {
   AppPageRoute? get currentRoute => _routeStack.isNotEmpty ? _routeStack.last : null;
   List<AppPageRoute> get allRoutes => _routeStack.toList();
   List<Page> get allPages => _routeStack.map((element) => element.page).toList();
+
+  Navigator? navigator;
+  Widget? layoutWidget;
 
   ///
   List<AppPageRoute> parseRouteInformation(Uri uri) {
@@ -92,6 +95,19 @@ class RouterService extends ChangeNotifier {
 
   pop() {
     if (_routeStack.isNotEmpty) _routeStack.removeLast();
+    notifyListeners();
+  }
+
+  goToInitialRoute() {
+    _routeStack.clear();
+    _routeStack.add(initialRoute);
+    notifyListeners();
+  }
+
+  switchToroute(AppPageRoute route, {Map<String, String>? pathVariables}) {
+    _routeStack.clear();
+    _routeStack.add(route);
+    _currentPathVariables = pathVariables;
     notifyListeners();
   }
 }
